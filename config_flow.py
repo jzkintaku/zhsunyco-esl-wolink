@@ -31,10 +31,26 @@ from .const import (
 )
 from .wolink import DEVICES, WOLINK_SERVICE_UUID, KNOWN_NAME_PREFIX
 
-MODEL_CHOICES = {
-    key: f"{profile['name']} ({profile['width']}x{profile['height']})"
-    for key, profile in DEVICES.items()
-}
+DEVICES.setdefault(
+    "175",
+    {
+        "width": 416,
+        "height": 240,
+        "mirror": False,
+        "rotate_cw": False,
+        "row_major": True,
+        "color": "BWRY",
+        "name": "ESL-37BWRY",
+    },
+)
+
+
+def _model_choices() -> dict[str, str]:
+    """Return display model choices from the current patched device table."""
+    return {
+        key: f"{profile['name']} ({profile['width']}x{profile['height']})"
+        for key, profile in DEVICES.items()
+    }
 
 
 class WolinkEslConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -81,7 +97,7 @@ class WolinkEslConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id="bluetooth_confirm",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_DEVICE_MODEL, default="290"): vol.In(MODEL_CHOICES),
+                    vol.Required(CONF_DEVICE_MODEL, default="175"): vol.In(_model_choices()),
                 }
             ),
             description_placeholders={"name": self._discovery_info.name or "Unknown"},
@@ -123,7 +139,7 @@ class WolinkEslConfigFlow(ConfigFlow, domain=DOMAIN):
             schema = vol.Schema(
                 {
                     vol.Required(CONF_ADDRESS): vol.In(address_choices),
-                    vol.Required(CONF_DEVICE_MODEL, default="290"): vol.In(MODEL_CHOICES),
+                    vol.Required(CONF_DEVICE_MODEL, default="175"): vol.In(_model_choices()),
                 }
             )
         else:
@@ -131,7 +147,7 @@ class WolinkEslConfigFlow(ConfigFlow, domain=DOMAIN):
             schema = vol.Schema(
                 {
                     vol.Required(CONF_ADDRESS): str,
-                    vol.Required(CONF_DEVICE_MODEL, default="290"): vol.In(MODEL_CHOICES),
+                    vol.Required(CONF_DEVICE_MODEL, default="175"): vol.In(_model_choices()),
                 }
             )
 

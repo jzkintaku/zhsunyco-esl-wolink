@@ -9,6 +9,16 @@ from zhsunyco_esl.image import (
     _DITHER_INDEX, process_image, process_pil_image, render_preview, quantize_image,
 )
 
+DEVICES["175"] = {
+    "width": 416,
+    "height": 240,
+    "mirror": False,
+    "rotate_cw": False,
+    "row_major": True,
+    "color": "BWRY",
+    "name": "ESL-37BWRY",
+}
+
 __all__ = [
     "ZhsunycoClient",
     "LabelConfig", "DEFAULT_CONFIG",
