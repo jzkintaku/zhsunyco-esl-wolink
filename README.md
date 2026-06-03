@@ -7,7 +7,7 @@ Home Assistant integration for Wolink BLE electronic shelf labels (ESL). Discove
 - **Auto-discovery** — detects nearby Wolink ESL devices via Bluetooth advertisement
 - **Multiple device models** — 2.90", 2.13", 1.54", and other form factors including multi-color (red, yellow) displays
 - **`drawcustom` service** — render layouts from a list of drawing elements (text, icons, shapes, QR/barcodes, images, charts, progress bars) with Jinja2 template support
-- **`send_image` service** — push an image file directly with optional Floyd-Steinberg dithering
+- **`send_image` service** — push an image file or uploaded image directly with optional Floyd-Steinberg dithering
 - **Live preview** — image entity shows the current display content as PNG
 - **Robust BLE** — dual-path retry with advertisement-window awareness for reliable writes to sleeping devices
 
@@ -31,7 +31,7 @@ Supported element types: `text`, `multiline`, `icon` (MDI), `line`, `rectangle`,
 
 ### `wolink_esl.send_image`
 
-Sends an image file to the display with optional dithering.
+Sends an image file path or an uploaded image from the Lovelace card to the display with optional dithering.
 
 ## Installation
 

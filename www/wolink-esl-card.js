@@ -157,6 +157,12 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
             </div>
           </div>
 
+          <div class="image-upload">
+            <label>Image:</label>
+            <input type="file" accept="image/*" @change="${this._onImageSelected}" />
+            ${this._imageName?I`<div class="status">${this._imageName}</div>`:""}
+          </div>
+
           <div class="buttons">
             <button
               class="btn btn-preview"
@@ -172,6 +178,13 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
             >
               ${this._sending?"Working...":"Send"}
             </button>
+            <button
+              class="btn btn-send"
+              ?disabled="${this._sending||!this._imageDataUrl}"
+              @click="${this._onSendImage}"
+            >
+              ${this._sending?"Working...":"Send Image"}
+            </button>
           </div>
 
           <div
@@ -181,4 +194,4 @@ const t=globalThis,e=t.ShadowRoot&&(void 0===t.ShadyCSS||t.ShadyCSS.nativeShadow
           </div>
         </div>
       </ha-card>
-    `}_onPayloadInput(t){this._payloadText=t.target.value}_onBackgroundChange(t){const e=t.detail?.value??t.target?.value;e&&(this._background=e)}_onRotationChange(t){const e=t.detail?.value??t.target?.value;null!=e&&(this._rotation=parseInt(e,10))}_onMirrorChange(t){const e=t.detail?.value??t.target?.value;e&&(this._mirror=e)}async _callService(t){let e;this._error=null;try{e=JSON.parse(this._payloadText)}catch(t){return void(this._error=`JSON parse error: ${t.message}`)}if(Array.isArray(e)){this._sending=!0;try{const s={entity_id:this._config.entity,payload:e,background:this._background,rotate:this._rotation,dry_run:t};this._mirror&&"none"!==this._mirror&&(s.mirror=this._mirror),await this.hass.callService("wolink_esl","drawcustom",s),t?(await new Promise(t=>setTimeout(t,500)),this._cacheBuster=Date.now()):(this._lastSent=(new Date).toLocaleTimeString(),await new Promise(t=>setTimeout(t,500)),this._cacheBuster=Date.now())}catch(t){this._error=`Service call failed: ${t.message||t}`}finally{this._sending=!1}}else this._error="Payload must be a JSON array"}_onPreview(){this._callService(!0)}_onSend(){this._callService(!1)}}customElements.get("wolink-esl-card")||customElements.define("wolink-esl-card",pt),window.customCards=window.customCards||[],window.customCards.push({type:"wolink-esl-card",name:"Wolink ESL Display",description:"Preview and control Wolink BLE e-paper labels",preview:!0});export{o as a,I as b,nt as i};
+    `}_onPayloadInput(t){this._payloadText=t.target.value}_onBackgroundChange(t){const e=t.detail?.value??t.target?.value;e&&(this._background=e)}_onRotationChange(t){const e=t.detail?.value??t.target?.value;null!=e&&(this._rotation=parseInt(e,10))}_onMirrorChange(t){const e=t.detail?.value??t.target?.value;e&&(this._mirror=e)}_onImageSelected(t){const e=t.target.files?.[0];if(!e)return;const s=new FileReader;s.onload=()=>{this._imageDataUrl=s.result,this._imageName=e.name,this._error=null,this.requestUpdate()},s.onerror=()=>{this._error="Failed to read selected image",this.requestUpdate()},s.readAsDataURL(e)}async _callService(t){let e;this._error=null;try{e=JSON.parse(this._payloadText)}catch(t){return void(this._error=`JSON parse error: ${t.message}`)}if(Array.isArray(e)){this._sending=!0;try{const s={entity_id:this._config.entity,payload:e,background:this._background,rotate:this._rotation,dry_run:t};this._mirror&&"none"!==this._mirror&&(s.mirror=this._mirror),await this.hass.callService("wolink_esl","drawcustom",s),t?(await new Promise(t=>setTimeout(t,500)),this._cacheBuster=Date.now()):(this._lastSent=(new Date).toLocaleTimeString(),await new Promise(t=>setTimeout(t,500)),this._cacheBuster=Date.now())}catch(t){this._error=`Service call failed: ${t.message||t}`}finally{this._sending=!1}}else this._error="Payload must be a JSON array"}async _sendSelectedImage(){if(!this._imageDataUrl)return void(this._error="Select an image first");this._error=null,this._sending=!0;try{const t={entity_id:this._config.entity,image:this._imageDataUrl,dither:!0,compress:!0};this._mirror&&"none"!==this._mirror&&(t.mirror=this._mirror),await this.hass.callService("wolink_esl","send_image",t),this._lastSent=(new Date).toLocaleTimeString(),await new Promise(t=>setTimeout(t,500)),this._cacheBuster=Date.now()}catch(t){this._error=`Image send failed: ${t.message||t}`}finally{this._sending=!1}}_onPreview(){this._callService(!0)}_onSend(){this._callService(!1)}_onSendImage(){this._sendSelectedImage()}}customElements.get("wolink-esl-card")||customElements.define("wolink-esl-card",pt),window.customCards=window.customCards||[],window.customCards.push({type:"wolink-esl-card",name:"Wolink ESL Display",description:"Preview and control Wolink BLE e-paper labels",preview:!0});export{o as a,I as b,nt as i};

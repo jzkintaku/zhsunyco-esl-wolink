@@ -9,6 +9,7 @@ if not importlib.util.find_spec("zhsunyco_esl"):
     if _whl:
         sys.path.append(str(_whl))
 
+import base64
 import io
 import logging
 from typing import TYPE_CHECKING
@@ -132,7 +133,7 @@ def _register_services(hass: HomeAssistant) -> None:
     async def async_handle_send_image(call: ServiceCall) -> None:
         """Handle the send_image service call."""
         entity_id = call.data["entity_id"]
-        image_path = call.data["image"]
+        image_source = call.data["image"]
         dither = call.data.get("dither", True)
 
         coordinator = _get_coordinator_for_entity(hass, entity_id)
@@ -141,10 +142,16 @@ def _register_services(hass: HomeAssistant) -> None:
                 f"Could not find Wolink ESL device for entity {entity_id}"
             )
 
-        from PIL import Image
+        def _open_image(source: str):
+            from PIL import Image
+
+            if source.startswith("data:image/"):
+                _header, encoded = source.split(",", 1)
+                return Image.open(io.BytesIO(base64.b64decode(encoded)))
+            return Image.open(source)
 
         try:
-            pil_image = await hass.async_add_executor_job(Image.open, image_path)
+            pil_image = await hass.async_add_executor_job(_open_image, image_source)
         except Exception as err:
             raise HomeAssistantError(f"Failed to open image: {err}") from err
 

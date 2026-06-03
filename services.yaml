@@ -1,6 +1,6 @@
 send_image:
   name: Send Image
-  description: Send an image file to a Wolink ESL e-paper display
+  description: Send an image file or uploaded image data to a Wolink ESL e-paper display
   fields:
     entity_id:
       name: Entity
@@ -11,7 +11,7 @@ send_image:
           integration: wolink_esl
     image:
       name: Image Path
-      description: Path to the image file to send
+      description: Path to an image file on Home Assistant, or an uploaded image data URL from the card
       required: true
       selector:
         text:
