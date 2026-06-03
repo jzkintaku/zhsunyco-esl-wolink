@@ -32,13 +32,12 @@ class JSModuleRegistration:
     def __init__(self, hass: HomeAssistant) -> None:
         """Initialize."""
         self.hass = hass
-        self.lovelace = hass.data.get(LOVELACE_DATA)
+        self.lovelace = None
 
     async def async_register(self) -> None:
         """Register static paths and Lovelace resources."""
         await self._async_register_static_paths()
-        if self.lovelace and self.lovelace.resource_mode == "storage":
-            await self._async_wait_for_lovelace_resources()
+        await self._async_wait_for_lovelace_resources()
 
     async def _async_register_static_paths(self) -> None:
         """Serve www/ and fonts/ at URL_BASE."""
@@ -63,6 +62,18 @@ class JSModuleRegistration:
         """Wait for Lovelace resources to be loaded, then register modules."""
 
         async def _check_loaded(_now: Any) -> None:
+            self.lovelace = self.hass.data.get(LOVELACE_DATA)
+            if not self.lovelace:
+                _LOGGER.debug("Lovelace data not available yet, retrying in 5s")
+                async_call_later(self.hass, 5, _check_loaded)
+                return
+            if self.lovelace.resource_mode != "storage":
+                _LOGGER.info(
+                    "Lovelace resources are in YAML mode; add %s/%s manually",
+                    URL_BASE,
+                    JSMODULES[0]["filename"],
+                )
+                return
             if self.lovelace.resources.loaded:
                 await self._async_register_modules()
             else:

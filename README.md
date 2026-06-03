@@ -42,6 +42,21 @@ Requires [HACS](https://hacs.xyz/docs/use/) (Home Assistant Community Store).
 3. Restart Home Assistant.
 4. The integration auto-discovers nearby Wolink ESL devices via Bluetooth, or you can add one manually by MAC address.
 
+## Lovelace Card
+
+The card is normally registered automatically. If it does not appear in the card picker, add this JavaScript resource manually:
+
+```text
+/hacsfiles/wolink_esl/wolink-esl-card.js?v=0.2.16
+```
+
+Then add a manual card:
+
+```yaml
+type: custom:wolink-esl-card
+entity: image.your_wolink_esl_display
+```
+
 ## Source
 
 This repository is auto-published from the monorepo: [shorti1996/zhsunyco-eink](https://github.com/shorti1996/zhsunyco-eink)
