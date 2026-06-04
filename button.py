@@ -90,6 +90,11 @@ class WolinkSendImageButton(ButtonEntity):
             identifiers={(DOMAIN, coordinator.address)},
         )
 
+    @property
+    def available(self) -> bool:
+        """Only enable sending when an image source is configured."""
+        return bool(self._coordinator.image_source)
+
     async def async_added_to_hass(self) -> None:
         """Refresh button availability when the configured image source changes."""
         self._coordinator.register_status_listener(self.async_write_ha_state)
@@ -98,13 +103,7 @@ class WolinkSendImageButton(ButtonEntity):
         """Send the configured image source to the display."""
         image_source = self._coordinator.image_source
         if not image_source:
-            error = "Set Image Source before pressing Send Image"
-            self._coordinator.set_error(error)
-            raise HomeAssistantError(error)
+            raise HomeAssistantError("Set Image Source before pressing Send Image")
 
-        try:
-            pil_image = await async_open_image_source(self.hass, image_source)
-        except Exception as err:
-            self._coordinator.set_error(f"Failed to open image source: {err}")
-            raise
+        pil_image = await async_open_image_source(self.hass, image_source)
         await self._coordinator.async_send_image(pil_image)

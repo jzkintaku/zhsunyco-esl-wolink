@@ -92,12 +92,6 @@ class WolinkEslCoordinator:
         for cb in self._status_listeners:
             cb()
 
-    def set_error(self, error: str) -> None:
-        """Set an error status for failures outside the BLE send pipeline."""
-        self.display_status = "error"
-        self.last_error = error
-        self._notify_status_listeners()
-
     # Manufacturer data company ID for Wolink devices
     WOLINK_COMPANY_ID = 0xBBAA
 
