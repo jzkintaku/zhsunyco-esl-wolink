@@ -17,6 +17,8 @@ Home Assistant integration for Wolink BLE electronic shelf labels (ESL). Discove
 |--------|------|-------------|
 | Display | Image | Live preview of current content; exposes `display_width`/`display_height` attributes |
 | Refresh Display | Button | Re-sends the last cached image |
+| Image Source | Text | Image path, HTTP(S) URL, or uploaded data URL to send |
+| Send Image | Button | Sends the configured Image Source to the display |
 | Display Status | Sensor | idle / sending / success / error |
 | Display Resolution | Sensor | e.g. "296x128" |
 | Last Refresh | Sensor | Timestamp of last successful write |
@@ -31,7 +33,7 @@ Supported element types: `text`, `multiline`, `icon` (MDI), `line`, `rectangle`,
 
 ### `wolink_esl.send_image`
 
-Sends an image file path or an uploaded image from the Lovelace card to the display with optional dithering.
+Sends an image file path, HTTP(S) image URL, or an uploaded image from the Lovelace card to the display with optional dithering.
 
 ## Installation
 

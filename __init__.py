@@ -9,7 +9,6 @@ if not importlib.util.find_spec("zhsunyco_esl"):
     if _whl:
         sys.path.append(str(_whl))
 
-import base64
 import io
 import logging
 from typing import TYPE_CHECKING
@@ -29,6 +28,7 @@ from homeassistant.helpers import config_validation as cv, entity_registry as er
 from .const import CONF_MIRROR, DEFAULT_MIRROR, DOMAIN
 from .coordinator import WolinkEslCoordinator
 from .frontend import JSModuleRegistration
+from .image_source import async_open_image_source
 
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
@@ -36,7 +36,7 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = [Platform.IMAGE, Platform.BUTTON, Platform.SENSOR]
+PLATFORMS = [Platform.IMAGE, Platform.BUTTON, Platform.SENSOR, Platform.TEXT]
 
 SERVICE_SEND_IMAGE = "send_image"
 SERVICE_DRAWCUSTOM = "drawcustom"
@@ -142,16 +142,8 @@ def _register_services(hass: HomeAssistant) -> None:
                 f"Could not find Wolink ESL device for entity {entity_id}"
             )
 
-        def _open_image(source: str):
-            from PIL import Image
-
-            if source.startswith("data:image/"):
-                _header, encoded = source.split(",", 1)
-                return Image.open(io.BytesIO(base64.b64decode(encoded)))
-            return Image.open(source)
-
         try:
-            pil_image = await hass.async_add_executor_job(_open_image, image_source)
+            pil_image = await async_open_image_source(hass, image_source)
         except Exception as err:
             raise HomeAssistantError(f"Failed to open image: {err}") from err
 

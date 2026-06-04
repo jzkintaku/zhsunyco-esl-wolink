@@ -69,6 +69,7 @@ class WolinkEslCoordinator:
         self._ble_device: BLEDevice | None = None
         self._last_image_bytes: bytes | None = None  # PNG for preview
         self._image_entity: object | None = None  # WolinkDisplayPreview, set by entity
+        self.image_source: str = ""
 
         # Display status tracking
         self.display_status: str = "idle"
