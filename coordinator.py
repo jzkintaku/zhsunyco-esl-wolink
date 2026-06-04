@@ -223,6 +223,12 @@ class WolinkEslCoordinator:
                 planes[0], planes[1], planes[2],
                 self.label_config.width, self.label_config.height,
             )
+            if mirror and mirror != "none":
+                from PIL.Image import Transpose
+                if mirror == "horizontal":
+                    preview_img = preview_img.transpose(Transpose.FLIP_LEFT_RIGHT)
+                elif mirror == "vertical":
+                    preview_img = preview_img.transpose(Transpose.FLIP_TOP_BOTTOM)
 
             buf = io.BytesIO()
             await self.hass.async_add_executor_job(preview_img.save, buf, "PNG")

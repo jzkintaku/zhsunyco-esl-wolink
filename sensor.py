@@ -12,7 +12,7 @@ from homeassistant.components.sensor import (
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import EntityCategory
 
-from .const import DISPLAY_STATUSES, DOMAIN
+from .const import DISPLAY_STATUSES, DOMAIN, UPLOAD_URL
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -32,11 +32,45 @@ async def async_setup_entry(
     """Set up Wolink ESL sensor entities."""
     coordinator: WolinkEslCoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([
+        WolinkImageManagerUrlSensor(coordinator),
         WolinkResolutionSensor(coordinator),
         WolinkDisplayStatusSensor(coordinator),
         WolinkLastRefreshSensor(coordinator),
         WolinkBatteryVoltageSensor(coordinator),
     ])
+
+
+class WolinkImageManagerUrlSensor(SensorEntity):
+    """Exposes the local image manager URL on the device page."""
+
+    _attr_has_entity_name = True
+    _attr_name = "Image Manager URL"
+    _attr_icon = "mdi:link-variant"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator: WolinkEslCoordinator) -> None:
+        self._coordinator = coordinator
+        self._attr_unique_id = f"{coordinator.address}_image_manager_url"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, coordinator.address)},
+        )
+
+    @property
+    def native_value(self) -> str:
+        return UPLOAD_URL
+
+    @property
+    def extra_state_attributes(self) -> dict[str, str]:
+        base_url = (
+            self._coordinator.hass.config.external_url
+            or self._coordinator.hass.config.internal_url
+            or ""
+        )
+        absolute_url = f"{base_url.rstrip('/')}{UPLOAD_URL}" if base_url else UPLOAD_URL
+        return {
+            "url": UPLOAD_URL,
+            "absolute_url": absolute_url,
+        }
 
 
 class WolinkResolutionSensor(SensorEntity):

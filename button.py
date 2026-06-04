@@ -6,13 +6,12 @@ import io
 import logging
 from typing import TYPE_CHECKING
 
-from homeassistant.components import persistent_notification
 from homeassistant.components.button import ButtonEntity
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, UPLOAD_URL
+from .const import DOMAIN
 from .image_source import async_open_image_source, async_save_processed_image, safe_image_filename
 
 if TYPE_CHECKING:
@@ -23,13 +22,6 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-def _upload_urls(coordinator: WolinkEslCoordinator) -> tuple[str, str]:
-    """Return relative and best-effort absolute image tool URLs."""
-    hass = coordinator.hass
-    base_url = hass.config.external_url or hass.config.internal_url or ""
-    return UPLOAD_URL, f"{base_url.rstrip('/')}{UPLOAD_URL}" if base_url else UPLOAD_URL
-
-
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
@@ -38,51 +30,11 @@ async def async_setup_entry(
     """Set up Wolink ESL button entity."""
     coordinator: WolinkEslCoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([
-        WolinkOpenImageToolButton(coordinator),
         WolinkRefreshButton(coordinator),
         WolinkSendImageButton(coordinator),
         WolinkProcessImageButton(coordinator),
         WolinkSendProcessedImageButton(coordinator),
     ])
-
-
-class WolinkOpenImageToolButton(ButtonEntity):
-    """Creates a clickable notification with the image tool URL."""
-
-    _attr_has_entity_name = True
-    _attr_name = "Open Image Tool"
-    _attr_icon = "mdi:open-in-new"
-
-    def __init__(self, coordinator: WolinkEslCoordinator) -> None:
-        """Initialize the button entity."""
-        self._coordinator = coordinator
-        self._attr_unique_id = f"{coordinator.address}_open_image_tool"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, coordinator.address)},
-        )
-
-    @property
-    def extra_state_attributes(self) -> dict[str, str]:
-        """Expose the upload tool URL for dashboard cards and automations."""
-        relative_url, absolute_url = _upload_urls(self._coordinator)
-        return {
-            "upload_url": relative_url,
-            "absolute_upload_url": absolute_url,
-        }
-
-    async def async_press(self) -> None:
-        """Show a Home Assistant notification with the upload tool link."""
-        relative_url, absolute_url = _upload_urls(self._coordinator)
-        persistent_notification.async_create(
-            self.hass,
-            (
-                "Open the Wolink ESL image tool:\n\n"
-                f"[{absolute_url}]({absolute_url})\n\n"
-                f"Relative path: `{relative_url}`"
-            ),
-            title="Wolink ESL Image Tool",
-            notification_id=f"wolink_esl_image_tool_{self._coordinator.address}",
-        )
 
 
 class WolinkRefreshButton(ButtonEntity):

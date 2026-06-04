@@ -12,12 +12,20 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 
 IMAGE_DIR = "wolink_esl_images"
+UPLOAD_DIR = "wolink_esl_uploads"
 _SAFE_FILENAME = re.compile(r"[^A-Za-z0-9._-]+")
 
 
 def image_storage_dir(hass) -> Path:
     """Return the directory used for processed Wolink ESL images."""
     path = Path(hass.config.path(IMAGE_DIR))
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def upload_storage_dir(hass) -> Path:
+    """Return the directory used for uploaded original Wolink ESL images."""
+    path = Path(hass.config.path(UPLOAD_DIR))
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -35,9 +43,20 @@ def image_path_for_name(hass, filename: str) -> Path:
     return image_storage_dir(hass) / safe_name
 
 
+def uploaded_path_for_name(hass, filename: str) -> Path:
+    """Resolve an uploaded image filename without allowing path traversal."""
+    safe_name = safe_image_filename(filename)
+    return upload_storage_dir(hass) / safe_name
+
+
 def list_processed_images(hass) -> list[str]:
     """List processed image filenames."""
     return sorted(path.name for path in image_storage_dir(hass).glob("*.png"))
+
+
+def list_uploaded_images(hass) -> list[str]:
+    """List uploaded original image filenames."""
+    return sorted(path.name for path in upload_storage_dir(hass).glob("*.png"))
 
 
 async def async_save_processed_image(hass, image, filename: str, width: int, height: int) -> str:
@@ -52,6 +71,22 @@ async def async_save_processed_image(hass, image, filename: str, width: int, hei
         height,
     )
     return safe_name
+
+
+async def async_save_uploaded_image(hass, image, filename: str) -> str:
+    """Save an uploaded original image as PNG and return its filename."""
+    safe_name = safe_image_filename(filename)
+    save_path = uploaded_path_for_name(hass, safe_name)
+    await hass.async_add_executor_job(_save_uploaded_image, image, save_path)
+    return safe_name
+
+
+async def async_open_uploaded_image(hass, filename: str):
+    """Open a previously uploaded original image by filename."""
+    return await hass.async_add_executor_job(
+        _open_image_path,
+        str(uploaded_path_for_name(hass, filename)),
+    )
 
 
 async def async_open_image_source(hass, source: str):
@@ -120,3 +155,8 @@ def _save_processed_image(image, path: Path, width: int, height: int) -> None:
     y = (height - image.height) // 2
     canvas.paste(image, (x, y))
     canvas.save(path, "PNG")
+
+
+def _save_uploaded_image(image, path: Path) -> None:
+    """Save an uploaded image as a normalized RGB PNG."""
+    image.convert("RGB").save(path, "PNG")

@@ -16,7 +16,7 @@ Home Assistant integration for Wolink BLE electronic shelf labels (ESL). Discove
 | Entity | Type | Description |
 |--------|------|-------------|
 | Display | Image | Live preview of current content; exposes `display_width`/`display_height` attributes |
-| Open Image Tool | Button | Creates a notification with the upload/process page link |
+| Image Manager URL | Sensor | Shows the image manager page URL |
 | Refresh Display | Button | Re-sends the last cached image |
 | Image Source | Text | Image path, HTTP(S) URL, or uploaded data URL to send |
 | Send Image | Button | Sends the configured Image Source to the display |
@@ -41,13 +41,13 @@ Sends an image file path, HTTP(S) image URL, or an uploaded image from the Lovel
 
 ### Upload Page
 
-Open the authenticated upload page in Home Assistant to process local images and send processed files by name:
+Open the image manager page in Home Assistant to upload original images, preview uploaded and processed images, process local images, rename/delete processed PNGs, and send processed files by name:
 
 ```text
 /wolink_esl/upload
 ```
 
-The page saves processed PNG files under `wolink_esl_images/` in the Home Assistant config directory. `Image Source` can also be set to one of those processed filenames.
+The page saves uploaded originals under `wolink_esl_uploads/` and processed PNG files under `wolink_esl_images/` in the Home Assistant config directory. `Image Source` can also be set to one of those processed filenames.
 
 ## Installation
 
