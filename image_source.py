@@ -4,9 +4,40 @@ from __future__ import annotations
 
 import base64
 import io
+import re
+from pathlib import Path
 
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
+
+IMAGE_DIR = "wolink_esl_images"
+_SAFE_FILENAME = re.compile(r"[^A-Za-z0-9._-]+")
+
+
+def image_storage_dir(hass) -> Path:
+    """Return the directory used for processed Wolink ESL images."""
+    path = Path(hass.config.path(IMAGE_DIR))
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def safe_image_filename(filename: str) -> str:
+    """Return a safe PNG filename for saved processed images."""
+    stem = Path(filename).stem.strip() or "image"
+    stem = _SAFE_FILENAME.sub("_", stem).strip("._") or "image"
+    return f"{stem}.png"
+
+
+def image_path_for_name(hass, filename: str) -> Path:
+    """Resolve a stored image filename without allowing path traversal."""
+    safe_name = safe_image_filename(filename)
+    return image_storage_dir(hass) / safe_name
+
+
+def list_processed_images(hass) -> list[str]:
+    """List processed image filenames."""
+    return sorted(path.name for path in image_storage_dir(hass).glob("*.png"))
 
 
 async def async_open_image_source(hass, source: str):
@@ -37,6 +68,9 @@ async def async_open_image_source(hass, source: str):
         except Exception as err:
             raise HomeAssistantError(f"Failed to decode image data URL: {err}") from err
         return await hass.async_add_executor_job(_open_image_bytes, data)
+
+    if not any(sep in source for sep in ("/", "\\")):
+        return await hass.async_add_executor_job(_open_image_path, str(image_path_for_name(hass, source)))
 
     return await hass.async_add_executor_job(_open_image_path, source)
 

@@ -37,11 +37,13 @@ Sends an image file path, HTTP(S) image URL, or an uploaded image from the Lovel
 
 ### Upload Page
 
-Open the authenticated upload page in Home Assistant to choose a local file in the browser and send it directly:
+Open the authenticated upload page in Home Assistant to process local images and send processed files by name:
 
 ```text
 /api/wolink_esl/upload
 ```
+
+The page saves processed PNG files under `wolink_esl_images/` in the Home Assistant config directory. `Image Source` can also be set to one of those processed filenames.
 
 ## Installation
 
