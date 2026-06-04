@@ -1,4 +1,4 @@
-"""Authenticated upload and processed-image picker for Wolink ESL images."""
+"""Upload and processed-image picker for Wolink ESL images."""
 
 from __future__ import annotations
 
@@ -23,9 +23,9 @@ from .image_source import (
 class WolinkUploadView(HomeAssistantView):
     """Image processing page for configured Wolink ESL displays."""
 
-    url = "/api/wolink_esl/upload"
-    name = "api:wolink_esl:upload"
-    requires_auth = True
+    url = "/wolink_esl/upload"
+    name = "wolink_esl:upload"
+    requires_auth = False
 
     async def get(self, request: web.Request) -> web.Response:
         """Render the image tool."""
