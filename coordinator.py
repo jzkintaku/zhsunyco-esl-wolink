@@ -188,7 +188,10 @@ class WolinkEslCoordinator:
                 compress = self.entry.options.get(CONF_COMPRESS, DEFAULT_COMPRESS)
 
             if mirror is None:
-                mirror = self.entry.options.get(CONF_MIRROR, DEFAULT_MIRROR)
+                mirror = self.entry.options.get(
+                    CONF_MIRROR,
+                    self.device_profile.get("default_mirror", DEFAULT_MIRROR),
+                )
             if mirror and mirror != "none":
                 _LOGGER.debug("Device %s: applying %s mirror", self.address, mirror)
                 from PIL.Image import Transpose

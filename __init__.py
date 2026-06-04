@@ -191,7 +191,10 @@ def _register_services(hass: HomeAssistant) -> None:
 
             mirror = call.data.get("mirror")
             if mirror is None:
-                mirror = coordinator.entry.options.get(CONF_MIRROR, DEFAULT_MIRROR)
+                mirror = coordinator.entry.options.get(
+                    CONF_MIRROR,
+                    coordinator.device_profile.get("default_mirror", DEFAULT_MIRROR),
+                )
             if mirror and mirror != "none":
                 _LOGGER.debug("dry_run: applying %s mirror", mirror)
                 if mirror == "horizontal":

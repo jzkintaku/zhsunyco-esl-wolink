@@ -13,6 +13,7 @@ DEVICES["175"] = {
     "width": 416,
     "height": 240,
     "mirror": False,
+    "default_mirror": "vertical",
     "rotate_cw": False,
     "row_major": False,
     "color": "BWRY",
