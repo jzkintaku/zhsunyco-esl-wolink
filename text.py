@@ -50,6 +50,11 @@ class WolinkImageSourceText(TextEntity, RestoreEntity):
         """Return the current image source."""
         return self._coordinator.image_source
 
+    @property
+    def extra_state_attributes(self) -> dict[str, str]:
+        """Expose the built-in upload page URL."""
+        return {"upload_url": "/api/wolink_esl/upload"}
+
     async def async_set_value(self, value: str) -> None:
         """Set the image source used by the send image button."""
         self._coordinator.image_source = value.strip()

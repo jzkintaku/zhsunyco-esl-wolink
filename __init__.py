@@ -29,6 +29,7 @@ from .const import CONF_MIRROR, DEFAULT_MIRROR, DOMAIN
 from .coordinator import WolinkEslCoordinator
 from .frontend import JSModuleRegistration
 from .image_source import async_open_image_source
+from .upload_view import WolinkUploadView
 
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
@@ -71,6 +72,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     _register_services(hass)
+    hass.http.register_view(WolinkUploadView())
 
     async def _register_frontend(_event=None) -> None:
         registrar = JSModuleRegistration(hass)

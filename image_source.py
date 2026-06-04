@@ -41,6 +41,11 @@ async def async_open_image_source(hass, source: str):
     return await hass.async_add_executor_job(_open_image_path, source)
 
 
+async def async_open_image_bytes(hass, data: bytes):
+    """Open an image from uploaded bytes."""
+    return await hass.async_add_executor_job(_open_image_bytes, data)
+
+
 def _open_image_bytes(data: bytes):
     from PIL import Image
 

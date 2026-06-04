@@ -35,6 +35,14 @@ Supported element types: `text`, `multiline`, `icon` (MDI), `line`, `rectangle`,
 
 Sends an image file path, HTTP(S) image URL, or an uploaded image from the Lovelace card to the display with optional dithering.
 
+### Upload Page
+
+Open the authenticated upload page in Home Assistant to choose a local file in the browser and send it directly:
+
+```text
+/api/wolink_esl/upload
+```
+
 ## Installation
 
 Requires [HACS](https://hacs.xyz/docs/use/) (Home Assistant Community Store).
