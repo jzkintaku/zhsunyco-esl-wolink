@@ -45,10 +45,19 @@ class WolinkRefreshButton(ButtonEntity):
             identifiers={(DOMAIN, coordinator.address)},
         )
 
+    @property
+    def available(self) -> bool:
+        """Only enable refresh after an image has been sent in this HA session."""
+        return self._coordinator._last_image_bytes is not None
+
+    async def async_added_to_hass(self) -> None:
+        """Refresh button availability when the cached image changes."""
+        self._coordinator.register_status_listener(self.async_write_ha_state)
+
     async def async_press(self) -> None:
         """Re-send the last cached image to the device."""
         if self._coordinator._last_image_bytes is None:
-            _LOGGER.warning(
+            _LOGGER.info(
                 "No image to refresh for %s — send an image first",
                 self._coordinator.address,
             )

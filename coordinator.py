@@ -122,6 +122,7 @@ class WolinkEslCoordinator:
         self._last_image_bytes = png_bytes
         if self._image_entity is not None:
             self._image_entity.update_image(png_bytes)
+        self._notify_status_listeners()
 
     def _get_cached_ble_device(self) -> BLEDevice | None:
         """Return cached BLE device if available (may be stale)."""
