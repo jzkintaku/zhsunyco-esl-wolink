@@ -9,7 +9,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
 
-from .const import DOMAIN
+from .const import DOMAIN, UPLOAD_URL
 
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
@@ -53,7 +53,7 @@ class WolinkImageSourceText(TextEntity, RestoreEntity):
     @property
     def extra_state_attributes(self) -> dict[str, str]:
         """Expose the built-in upload page URL."""
-        return {"upload_url": "/wolink_esl/upload"}
+        return {"upload_url": UPLOAD_URL}
 
     async def async_set_value(self, value: str) -> None:
         """Set the image source used by the send image button."""

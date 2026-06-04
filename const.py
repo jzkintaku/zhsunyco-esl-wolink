@@ -11,6 +11,7 @@ with open(_MANIFEST_PATH, encoding="utf-8") as _f:
     INTEGRATION_VERSION: Final[str] = json.load(_f).get("version", "0.0.0")
 
 URL_BASE: Final[str] = "/hacsfiles/wolink_esl"
+UPLOAD_URL: Final[str] = "/wolink_esl/upload"
 
 JSMODULES: Final[list[dict[str, str]]] = [
     {

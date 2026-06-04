@@ -16,6 +16,7 @@ Home Assistant integration for Wolink BLE electronic shelf labels (ESL). Discove
 | Entity | Type | Description |
 |--------|------|-------------|
 | Display | Image | Live preview of current content; exposes `display_width`/`display_height` attributes |
+| Open Image Tool | Button | Creates a notification with the upload/process page link |
 | Refresh Display | Button | Re-sends the last cached image |
 | Image Source | Text | Image path, HTTP(S) URL, or uploaded data URL to send |
 | Send Image | Button | Sends the configured Image Source to the display |
