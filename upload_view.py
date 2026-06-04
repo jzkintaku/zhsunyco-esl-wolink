@@ -56,9 +56,11 @@ class WolinkUploadView(HomeAssistantView):
             await coordinator.async_send_image(pil_image)
         except HomeAssistantError as err:
             message = f"Send failed: {err}"
+            coordinator.set_error(message)
             status = 500
         except Exception as err:
             message = f"Send failed: {err}"
+            coordinator.set_error(message)
             status = 500
         else:
             message = f"Sent image to {coordinator.device_profile['name']}."
@@ -124,6 +126,18 @@ class WolinkUploadView(HomeAssistantView):
         white-space: pre-wrap;
       }}
     </style>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {{
+        const form = document.querySelector("form");
+        const button = document.querySelector("button");
+        const message = document.querySelector(".message");
+        form.addEventListener("submit", () => {{
+          button.disabled = true;
+          button.textContent = "Sending...";
+          message.textContent = "Uploading and sending. This can take up to a few minutes while the tag wakes and refreshes.";
+        }});
+      }});
+    </script>
   </head>
   <body>
     <h1>Wolink ESL Upload</h1>
