@@ -40,6 +40,20 @@ def list_processed_images(hass) -> list[str]:
     return sorted(path.name for path in image_storage_dir(hass).glob("*.png"))
 
 
+async def async_save_processed_image(hass, image, filename: str, width: int, height: int) -> str:
+    """Resize an image to the display size, save it, and return its filename."""
+    safe_name = safe_image_filename(filename)
+    save_path = image_path_for_name(hass, safe_name)
+    await hass.async_add_executor_job(
+        _save_processed_image,
+        image,
+        save_path,
+        width,
+        height,
+    )
+    return safe_name
+
+
 async def async_open_image_source(hass, source: str):
     """Open an image from a local path, HTTP(S) URL, or data URL."""
     source = source.strip()
@@ -94,3 +108,15 @@ def _open_image_path(path: str):
     image = Image.open(path)
     image.load()
     return image
+
+
+def _save_processed_image(image, path: Path, width: int, height: int) -> None:
+    """Resize an uploaded image to the display size and save it as PNG."""
+    from PIL import Image, ImageOps
+
+    image = ImageOps.contain(image.convert("RGB"), (width, height))
+    canvas = Image.new("RGB", (width, height), "white")
+    x = (width - image.width) // 2
+    y = (height - image.height) // 2
+    canvas.paste(image, (x, y))
+    canvas.save(path, "PNG")

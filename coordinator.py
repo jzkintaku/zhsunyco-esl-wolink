@@ -70,6 +70,7 @@ class WolinkEslCoordinator:
         self._last_image_bytes: bytes | None = None  # PNG for preview
         self._image_entity: object | None = None  # WolinkDisplayPreview, set by entity
         self.image_source: str = ""
+        self.processed_image: str = ""
 
         # Display status tracking
         self.display_status: str = "idle"

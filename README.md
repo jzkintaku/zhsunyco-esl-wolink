@@ -19,6 +19,9 @@ Home Assistant integration for Wolink BLE electronic shelf labels (ESL). Discove
 | Refresh Display | Button | Re-sends the last cached image |
 | Image Source | Text | Image path, HTTP(S) URL, or uploaded data URL to send |
 | Send Image | Button | Sends the configured Image Source to the display |
+| Process Image Source | Button | Resizes Image Source and saves it as a processed PNG |
+| Processed Image | Select | Chooses a saved processed PNG by filename |
+| Send Processed Image | Button | Sends the selected processed PNG |
 | Display Status | Sensor | idle / sending / success / error |
 | Display Resolution | Sensor | e.g. "296x128" |
 | Last Refresh | Sensor | Timestamp of last successful write |

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import html
-from pathlib import Path
 
 from aiohttp import web
 
@@ -15,7 +14,7 @@ from .coordinator import WolinkEslCoordinator
 from .image_source import (
     async_open_image_bytes,
     async_open_image_source,
-    image_path_for_name,
+    async_save_processed_image,
     list_processed_images,
     safe_image_filename,
 )
@@ -71,11 +70,10 @@ class WolinkUploadView(HomeAssistantView):
             uploaded = image_file.file.read()
             pil_image = await async_open_image_bytes(hass, uploaded)
             filename = safe_image_filename(getattr(image_file, "filename", "image.png"))
-            save_path = image_path_for_name(hass, filename)
-            await hass.async_add_executor_job(
-                _save_processed_image,
+            saved_name = await async_save_processed_image(
+                hass,
                 pil_image,
-                save_path,
+                filename,
                 coordinator.label_config.width,
                 coordinator.label_config.height,
             )
@@ -84,7 +82,7 @@ class WolinkUploadView(HomeAssistantView):
 
         return self._response(
             hass,
-            f"Processed and saved {save_path.name} "
+            f"Processed and saved {saved_name} "
             f"({coordinator.label_config.width}x{coordinator.label_config.height}).",
         )
 
@@ -223,15 +221,3 @@ class WolinkUploadView(HomeAssistantView):
     <div class="message">{escaped_message}</div>
   </body>
 </html>"""
-
-
-def _save_processed_image(image, path: Path, width: int, height: int) -> None:
-    """Resize an uploaded image to the display size and save it as PNG."""
-    from PIL import Image, ImageOps
-
-    image = ImageOps.contain(image.convert("RGB"), (width, height))
-    canvas = Image.new("RGB", (width, height), "white")
-    x = (width - image.width) // 2
-    y = (height - image.height) // 2
-    canvas.paste(image, (x, y))
-    canvas.save(path, "PNG")

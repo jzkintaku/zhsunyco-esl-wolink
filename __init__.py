@@ -37,7 +37,13 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = [Platform.IMAGE, Platform.BUTTON, Platform.SENSOR, Platform.TEXT]
+PLATFORMS = [
+    Platform.IMAGE,
+    Platform.BUTTON,
+    Platform.SENSOR,
+    Platform.TEXT,
+    Platform.SELECT,
+]
 
 SERVICE_SEND_IMAGE = "send_image"
 SERVICE_DRAWCUSTOM = "drawcustom"
