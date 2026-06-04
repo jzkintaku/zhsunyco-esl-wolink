@@ -16,11 +16,8 @@ Home Assistant integration for Wolink BLE electronic shelf labels (ESL). Discove
 | Entity | Type | Description |
 |--------|------|-------------|
 | Display | Image | Live preview of current content; exposes `display_width`/`display_height` attributes |
-| Image Manager URL | Sensor | Shows the image manager page URL |
+| Image Manager URL | Sensor | Shows the full image manager page URL when Home Assistant has an internal/external URL configured |
 | Refresh Display | Button | Re-sends the last cached image |
-| Image Source | Text | Image path, HTTP(S) URL, or uploaded data URL to send |
-| Send Image | Button | Sends the configured Image Source to the display |
-| Process Image Source | Button | Resizes Image Source and saves it as a processed PNG |
 | Processed Image | Select | Chooses a saved processed PNG by filename |
 | Send Processed Image | Button | Sends the selected processed PNG |
 | Display Status | Sensor | idle / sending / success / error |
@@ -39,15 +36,22 @@ Supported element types: `text`, `multiline`, `icon` (MDI), `line`, `rectangle`,
 
 Sends an image file path, HTTP(S) image URL, or an uploaded image from the Lovelace card to the display with optional dithering.
 
-### Upload Page
+### Image Manager
 
-Open the image manager page in Home Assistant to upload original images, preview uploaded and processed images, process local images, rename/delete processed PNGs, and send processed files by name:
+Open the device's **Image Manager URL** sensor, or open the page directly in Home Assistant:
 
 ```text
 /wolink_esl/upload
 ```
 
-The page saves uploaded originals under `wolink_esl_uploads/` and processed PNG files under `wolink_esl_images/` in the Home Assistant config directory. `Image Source` can also be set to one of those processed filenames.
+The image manager is the recommended way to upload and send pictures:
+
+1. Upload an original image and check the preview.
+2. Click **Process to Display Size** for the target display.
+3. Check the processed preview.
+4. Click **Send to Display**, or choose the filename from the **Processed Image** select entity and press **Send Processed Image**.
+
+The page can also rename or delete processed images. Uploaded originals are stored under `wolink_esl_uploads/`; processed PNG files are stored under `wolink_esl_images/` in the Home Assistant config directory.
 
 ## Installation
 

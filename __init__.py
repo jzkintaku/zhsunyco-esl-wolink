@@ -41,7 +41,6 @@ PLATFORMS = [
     Platform.IMAGE,
     Platform.BUTTON,
     Platform.SENSOR,
-    Platform.TEXT,
     Platform.SELECT,
 ]
 

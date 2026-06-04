@@ -56,20 +56,23 @@ class WolinkImageManagerUrlSensor(SensorEntity):
         )
 
     @property
-    def native_value(self) -> str:
-        return UPLOAD_URL
-
-    @property
-    def extra_state_attributes(self) -> dict[str, str]:
+    def _manager_url(self) -> str:
         base_url = (
             self._coordinator.hass.config.external_url
             or self._coordinator.hass.config.internal_url
             or ""
         )
-        absolute_url = f"{base_url.rstrip('/')}{UPLOAD_URL}" if base_url else UPLOAD_URL
+        return f"{base_url.rstrip('/')}{UPLOAD_URL}" if base_url else UPLOAD_URL
+
+    @property
+    def native_value(self) -> str:
+        return self._manager_url
+
+    @property
+    def extra_state_attributes(self) -> dict[str, str]:
         return {
             "url": UPLOAD_URL,
-            "absolute_url": absolute_url,
+            "absolute_url": self._manager_url,
         }
 
 
