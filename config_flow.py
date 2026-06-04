@@ -38,7 +38,7 @@ DEVICES.setdefault(
         "height": 240,
         "mirror": False,
         "rotate_cw": False,
-        "row_major": True,
+        "row_major": False,
         "color": "BWRY",
         "name": "ESL-37BWRY",
     },
